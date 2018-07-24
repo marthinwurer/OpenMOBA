@@ -12,12 +12,12 @@ import static java.lang.Math.*;
 
 public class Client extends BasicGame
 {
-    public static Logger log = LogManager.getLogger(Client.class.getName());
+    private static Logger log = LogManager.getLogger(Client.class.getName());
 
-    public static SpriteSheet spriteSheet;
+    private static SpriteSheet spriteSheet;
 
-    public static int SPRITE_SIZE = 32;
-    public static int TICKS_PER_SECOND = 60;
+    public static final int SPRITE_SIZE = 32;
+    public static final int TICKS_PER_SECOND = 60;
 
 
     SpriteSheetWrapper sheetWrapper;
@@ -30,6 +30,8 @@ public class Client extends BasicGame
 
     float dest_x = 400;
     float dest_y = 400;
+
+    Entity character;
 
     public Client()
     {
@@ -44,31 +46,16 @@ public class Client extends BasicGame
 
         Input input = gc.getInput();
         input.enableKeyRepeat();
+
+        character  = new Entity("Archer",
+                sheetWrapper.getSprite(SpriteID.ARCHER).getScaledCopy(2),
+                200, 200, 200);
     }
 
     @Override
     public void update(GameContainer gc, int i) throws SlickException {
 
-        // move towards the destination
-        float speed = 2000.0f;
-
-        float dx = view_x - dest_x;
-        float dy = view_y - dest_y;
-        float hyp = (float) sqrt(dx * dx + dy * dy);
-
-        if (abs(hyp) > 1) {
-            log.info("differences: x: " + dx + ", dy: " + dy + " hyp: " + hyp);
-
-            float xratio = dx/hyp;
-            float yratio = dy/hyp;
-
-            float angle = (float) Math.atan2(dy, dx);
-
-//            view_x -= speed * cos(angle) / TICKS_PER_SECOND;
-//            view_y -= speed * sin(angle) / TICKS_PER_SECOND;
-            view_x -= speed * xratio / TICKS_PER_SECOND;
-            view_y -= speed * yratio / TICKS_PER_SECOND;
-        }
+        character.update_position();
 
     }
 
@@ -81,7 +68,7 @@ public class Client extends BasicGame
         int offset = scaled_size / 2;
         int basex = 100;
         int basey = 100;
-        g.drawImage(sheetWrapper.getSprite(SpriteID.ARCHER).getScaledCopy(scale), view_x - offset, view_y - offset);
+        g.drawImage(character.getSprite(), character.getX() - offset, character.getY() - offset);
 //        for (int xx = imagex; xx < min(imagex + 6, spriteSheet.getHorizontalCount()); xx++){
 //            for (int yy = imagey; yy < min(imagey + 6, spriteSheet.getVerticalCount()); yy++) {
 //                g.drawImage(spriteSheet.getSubImage(xx, yy).getScaledCopy(scale), basex + (xx - imagex) * scaled_size, basey + (yy - imagey) * scaled_size);
@@ -114,8 +101,7 @@ public class Client extends BasicGame
 
     @Override
     public void mouseReleased(int button, int x, int y) {
-        this.dest_x = x;
-        this.dest_y = y;
+        character.setDest(x, y);
     }
 
     public static void main(String[] args)

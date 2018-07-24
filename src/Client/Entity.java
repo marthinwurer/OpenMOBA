@@ -1,21 +1,36 @@
 package Client;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.newdawn.slick.Image;
 
+import static Client.Client.TICKS_PER_SECOND;
 import static java.lang.Math.*;
 
 public class Entity {
+    private static Logger log = LogManager.getLogger(Client.class.getName());
+
     private Image sprite;
     private float x;
     private float y;
     private float dest_x;
     private float dest_y;
     private float speed;
+    private String name;
 
-    private void update_position( ){
+    public Entity(String name, Image sprite, float startx, float starty, float speed){
+        this.name = name;
+        this.sprite = sprite;
+        this.x = startx;
+        this.y = starty;
+        this.dest_x = startx;
+        this.dest_y = starty;
+        this.speed = speed;
+
+    }
+
+    public void update_position(){
         // move towards the destination
-        float speed = 150.0f;
-
         float dx = x - dest_x;
         float dy = y - dest_y;
         float hyp = (float) sqrt(dx * dx + dy * dy);
@@ -25,15 +40,28 @@ public class Entity {
 
             float xratio = dx/hyp;
             float yratio = dy/hyp;
+            float distance = min(speed / TICKS_PER_SECOND, hyp);
 
-            float angle = (float) Math.atan2(dy, dx);
-
-//            view_x -= speed * cos(angle) / TICKS_PER_SECOND;
-//            view_y -= speed * sin(angle) / TICKS_PER_SECOND;
-//            x -= speed * xratio / TICKS_PER_SECOND;
-//            y -= speed * yratio / TICKS_PER_SECOND;
+            x -= distance * xratio;
+            y -= distance * yratio;
         }
-
     }
 
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public Image getSprite() {
+        return sprite;
+    }
+
+    public void setDest(float x, float y){
+        this.dest_x = x;
+        this.dest_y = y;
+    }
 }
