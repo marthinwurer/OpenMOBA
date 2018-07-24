@@ -50,7 +50,7 @@ public class Client extends BasicGame
     public void update(GameContainer gc, int i) throws SlickException {
 
         // move towards the destination
-        float speed = 150.0f;
+        float speed = 2000.0f;
 
         float dx = view_x - dest_x;
         float dy = view_y - dest_y;
