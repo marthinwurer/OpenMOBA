@@ -15,6 +15,8 @@ public class Entity {
     private float y;
     private float dest_x;
     private float dest_y;
+    private float x_offset;
+    private float y_offset;
     private float speed;
     private String name;
 
@@ -26,7 +28,6 @@ public class Entity {
         this.dest_x = startx;
         this.dest_y = starty;
         this.speed = speed;
-
     }
 
     public void update_position(){
