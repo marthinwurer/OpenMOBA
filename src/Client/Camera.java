@@ -26,7 +26,7 @@ public class Camera {
      * @return
      */
     public float x() {
-        return center_x - window_width / 2;
+        return center_x * zoom - window_width / 2;
     }
 
     /**
@@ -34,13 +34,14 @@ public class Camera {
      * @return
      */
     public float y() {
-        return center_y - window_height / 2;
+        return center_y * zoom - window_height / 2;
     }
 
     public void setupGraphics(GameContainer gc, Graphics g) {
         this.window_height = gc.getScreenHeight();
         this.window_width = gc.getScreenWidth();
         g.translate(-x(), -y());
+        g.scale(zoom, zoom);
     }
 
     public void setCenter(float x, float y) {
@@ -57,7 +58,7 @@ public class Camera {
     }
 
     public Vector2f toWorldCoordinates(float x, float y) {
-        return new Vector2f(x + x(), y + y());
+        return new Vector2f(x/zoom + x(), y/zoom + y());
     }
 
     public void zoom_in() {
