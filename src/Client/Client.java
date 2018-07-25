@@ -5,10 +5,6 @@ import org.newdawn.slick.*;
 import org.apache.logging.log4j.Logger;
 import org.newdawn.slick.geom.Vector2f;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
 import static java.lang.Math.*;
 
 public class Client extends BasicGame
@@ -23,7 +19,7 @@ public class Client extends BasicGame
 
     SpriteSheetWrapper sheetWrapper;
 
-    GameContainer container;
+    AppGameContainer container;
 
     int base_width = 800;
     int base_height = 600;
@@ -37,6 +33,9 @@ public class Client extends BasicGame
     int imagex = 0;
     int imagey = 0;
 
+    Vector2f mousePos = new Vector2f();
+    Vector2f mouseWorldPosition = new Vector2f();
+
     Entity character;
 
     Camera camera;
@@ -49,12 +48,16 @@ public class Client extends BasicGame
     @Override
     public void init(GameContainer gc) throws SlickException {
         log.info("in init");
-        container = gc;
         if (gc instanceof AppGameContainer) {
             AppGameContainer c = (AppGameContainer) gc;
+            container = c;
             max_width = c.getScreenWidth();
             max_height = c.getScreenHeight();
-            c.setDisplayMode(max_width, max_height, true);
+            c.setDisplayMode(base_width, base_height, false);
+//            c.setDisplayMode(max_width, max_height, true);
+        }
+        else {
+            log.error("Container is not a AppGameContainer");
         }
 
         spriteSheet = new SpriteSheet("assets/ProjectUtumno_full.png", SPRITE_SIZE, SPRITE_SIZE);
@@ -63,7 +66,7 @@ public class Client extends BasicGame
         Input input = gc.getInput();
         input.enableKeyRepeat();
 
-        camera = new Camera(200, 200, max_width, max_height);
+        camera = new Camera(0, 0, max_width, max_height);
 
         character  = new Entity("Archer",
                 sheetWrapper.getSprite(SpriteID.ARCHER).getScaledCopy(3),
@@ -84,15 +87,11 @@ public class Client extends BasicGame
     {
         g.drawString("(" + imagex + ", " + imagey + ")", 50, 50);
         g.drawString("(" + camera.x() + ", " + camera.y() + ")", 50, 100);
+        g.drawString("Mouse:(" + mousePos.x + ", " + mousePos.y + ")", 50, 120);
+        g.drawString("World:(" + mouseWorldPosition.x + ", " + mouseWorldPosition.y + ")", 50, 140);
         camera.setupGraphics(gc, g);
         character.getSprite().drawCentered(character.getX(), character.getY());
-//        g.drawImage(character.getSprite(), character.getX() - offset, character.getY() - offset);
-//        for (int xx = imagex; xx < min(imagex + 6, spriteSheet.getHorizontalCount()); xx++){
-//            for (int yy = imagey; yy < min(imagey + 6, spriteSheet.getVerticalCount()); yy++) {
-//                g.drawImage(spriteSheet.getSubImage(xx, yy).getScaledCopy(scale), basex + (xx - imagex) * scaled_size, basey + (yy - imagey) * scaled_size);
-//            }
-//        }
-
+        g.drawImage(sheetWrapper.getSprite(SpriteID.TREE), 0, 0);
     }
 
     @Override
@@ -129,11 +128,13 @@ public class Client extends BasicGame
             case Input.KEY_F2:
                 if (container != null) {
                     try {
-                        container.setFullscreen(!container.isFullscreen());
-                        if (container.isFullscreen()) {
-                            container.setMouseGrabbed(true);
+                        if (!container.isFullscreen()) {
+                            container.setDisplayMode(max_width, max_height, true);
+//                            container.setMouseGrabbed(true);
+                            container.setDefaultMouseCursor();
                         } else {
-                            container.setMouseGrabbed(false);
+                            container.setDisplayMode(base_width, base_height, false);
+//                            container.setMouseGrabbed(false);
                         }
                     } catch (SlickException e) {
                         log.error(e);
@@ -160,6 +161,13 @@ public class Client extends BasicGame
         } else {
             camera.zoom_out();
         }
+    }
+
+    @Override
+    public void mouseMoved(int oldx, int oldy, int newx, int newy) {
+        mousePos.x = newx;
+        mousePos.y = newy;
+        mouseWorldPosition = camera.toWorldCoordinates(newx, newy);
     }
 
     public static void main(String[] args)

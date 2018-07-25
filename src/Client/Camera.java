@@ -4,7 +4,15 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Vector2f;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.Math.pow;
+
 public class Camera {
+
+    public static final float MAX_ZOOM = 5.0f;
+    public static final float MIN_ZOOM = -3.0f;
+
     private float center_x;
     private float center_y;
 
@@ -12,6 +20,7 @@ public class Camera {
     private int window_height;
 
     private float zoom;
+    private float zoomRatio;
 
     public Camera(float center_x, float center_y, int window_width, int window_height) {
         this.center_x = center_x;
@@ -58,14 +67,16 @@ public class Camera {
     }
 
     public Vector2f toWorldCoordinates(float x, float y) {
-        return new Vector2f(x/zoom + x(), y/zoom + y());
+        return new Vector2f((x + x())/zoom, (y + y())/zoom);
     }
 
     public void zoom_in() {
-        zoom *= 1.5;
+        zoomRatio = min(MAX_ZOOM, zoomRatio + 1);
+        zoom = (float) pow(1.5, zoomRatio);
     }
 
     public void zoom_out() {
-        zoom /= 1.5;
+        zoomRatio = max(MIN_ZOOM, zoomRatio - 1);
+        zoom = (float) pow(1.5, zoomRatio);
     }
 }
