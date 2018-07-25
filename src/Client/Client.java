@@ -3,6 +3,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.newdawn.slick.*;
 import org.apache.logging.log4j.Logger;
+import org.newdawn.slick.geom.Vector2f;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +39,8 @@ public class Client extends BasicGame
 
     Entity character;
 
+    Camera camera;
+
     public Client()
     {
         super("OpenMOBA");
@@ -60,6 +63,8 @@ public class Client extends BasicGame
         Input input = gc.getInput();
         input.enableKeyRepeat();
 
+        camera = new Camera(200, 200, max_width, max_height);
+
         character  = new Entity("Archer",
                 sheetWrapper.getSprite(SpriteID.ARCHER).getScaledCopy(3),
                 200, 200, 200);
@@ -78,12 +83,8 @@ public class Client extends BasicGame
     public void render(GameContainer gc, Graphics g) throws SlickException
     {
         g.drawString("(" + imagex + ", " + imagey + ")", 50, 50);
-        float scale = 2.0f;
-        int scaled_size = (int)(SPRITE_SIZE * scale);
-        int offset = scaled_size / 2;
-        int basex = 100;
-        int basey = 100;
-        g.translate(camera_x, camera_y);
+        g.drawString("(" + camera.x() + ", " + camera.y() + ")", 50, 100);
+        camera.setupGraphics(gc, g);
         character.getSprite().drawCentered(character.getX(), character.getY());
 //        g.drawImage(character.getSprite(), character.getX() - offset, character.getY() - offset);
 //        for (int xx = imagex; xx < min(imagex + 6, spriteSheet.getHorizontalCount()); xx++){
@@ -98,16 +99,16 @@ public class Client extends BasicGame
     public void keyPressed(int key, char c) {
         switch (key){
             case Input.KEY_W:
-                camera_y += SPRITE_SIZE;
+                camera.pan_y(SPRITE_SIZE);
                 break;
             case Input.KEY_S:
-                camera_y -= SPRITE_SIZE;
+                camera.pan_y(-SPRITE_SIZE);
                 break;
             case Input.KEY_A:
-                camera_x += SPRITE_SIZE;
+                camera.pan_x(SPRITE_SIZE);
                 break;
             case Input.KEY_D:
-                camera_x -= SPRITE_SIZE;
+                camera.pan_x(-SPRITE_SIZE);
                 break;
             case Input.KEY_UP:
                 imagey = max(0, imagey - 1);
@@ -129,10 +130,11 @@ public class Client extends BasicGame
                 if (container != null) {
                     try {
                         container.setFullscreen(!container.isFullscreen());
-                        if (container.isFullscreen())
+                        if (container.isFullscreen()) {
                             container.setMouseGrabbed(true);
-                        else
+                        } else {
                             container.setMouseGrabbed(false);
+                        }
                     } catch (SlickException e) {
                         log.error(e);
                     }
@@ -146,7 +148,18 @@ public class Client extends BasicGame
 
     @Override
     public void mouseReleased(int button, int x, int y) {
-        character.setDest(x, y);
+        Vector2f val = camera.toWorldCoordinates(x, y);
+        character.setDest(val.x, val.y);
+    }
+
+    @Override
+    public void mouseWheelMoved(int change) {
+        log.info("Mouse Change: " + change);
+        if ( change > 0) {
+            camera.zoom_in();
+        } else {
+            camera.zoom_out();
+        }
     }
 
     public static void main(String[] args)
