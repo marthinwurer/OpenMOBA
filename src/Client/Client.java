@@ -9,7 +9,7 @@ import static java.lang.Math.*;
 
 public class Client extends BasicGame
 {
-    private static Logger log = LogManager.getLogger(Client.class.getName());
+    private static Logger log = LogManager.getLogger(Client.class);
 
     private static SpriteSheet spriteSheet;
 
@@ -85,7 +85,7 @@ public class Client extends BasicGame
     @Override
     public void render(GameContainer gc, Graphics g) throws SlickException
     {
-        g.drawString("(" + imagex + ", " + imagey + ")", 50, 50);
+        g.drawString("(" + gc.getWidth() + ", " + gc.getHeight() + ")", 50, 50);
         g.drawString("(" + camera.x() + ", " + camera.y() + ")", 50, 100);
         g.drawString("Mouse:(" + mousePos.x + ", " + mousePos.y + ")", 50, 120);
         g.drawString("World:(" + mouseWorldPosition.x + ", " + mouseWorldPosition.y + ")", 50, 140);

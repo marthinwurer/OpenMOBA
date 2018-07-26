@@ -1,5 +1,7 @@
 package Client;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Vector2f;
@@ -9,6 +11,7 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 
 public class Camera {
+    private static Logger log = LogManager.getLogger(Camera.class);
 
     public static final float MAX_ZOOM = 5.0f;
     public static final float MIN_ZOOM = -3.0f;
@@ -35,7 +38,7 @@ public class Camera {
      * @return
      */
     public float x() {
-        return center_x * zoom - window_width / 2;
+        return (center_x - (window_width / 2) / zoom) * zoom;
     }
 
     /**
@@ -43,12 +46,14 @@ public class Camera {
      * @return
      */
     public float y() {
-        return center_y * zoom - window_height / 2;
+        return (center_y - (window_height / 2) / zoom) * zoom;
     }
 
     public void setupGraphics(GameContainer gc, Graphics g) {
-        this.window_height = gc.getScreenHeight();
-        this.window_width = gc.getScreenWidth();
+        this.window_height = gc.getHeight();
+        this.window_width = gc.getWidth();
+        g.drawString("Center: (" + center_x + ", " + center_y + ")", 300, 50);
+        g.drawString("Window: (" + window_width + ", " + window_height + ")", 300, 70);
         g.translate(-x(), -y());
         g.scale(zoom, zoom);
     }
@@ -73,6 +78,7 @@ public class Camera {
     public void zoom_in() {
         zoomRatio = min(MAX_ZOOM, zoomRatio + 1);
         zoom = (float) pow(1.5, zoomRatio);
+        log.debug("Zoom: " + zoom);
     }
 
     public void zoom_out() {
