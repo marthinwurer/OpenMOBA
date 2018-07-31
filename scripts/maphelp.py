@@ -21,6 +21,17 @@ text = data.text
 print(type(text))
 separate = text.split(",")
 print(len(separate))
+
+map_array = []
+for row in range(height):
+    row_array = []
+    for column in range(width):
+        index = row * width + column
+        row_array.append(separate[index])
+    map_array.append(row_array)
+
+print(map_array)
+
 # for line in text.split('\n'):
 #     print()
 #     print(line)
