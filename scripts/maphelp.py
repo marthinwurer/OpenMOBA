@@ -76,17 +76,9 @@ data.text = out_text
 
 tree.write("../assets/3lanemap_out.tmx")
 
-# print(map_array)
-
-# for line in text.split('\n'):
-#     print()
-#     print(line)
-
-
-
-
-# rows = []
-# for line in f:
-#     rows.append(line.split(','))
-# print(rows)
+with open("../assets/3lanemap_out.csv", 'w') as f:
+    f.write("%s,%s\n" % (height, width))
+    for row in range(height):
+        out_text = str(map_array[row])[1:-1] + "\n"
+        f.write(out_text)
 

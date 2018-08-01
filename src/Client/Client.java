@@ -4,6 +4,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.newdawn.slick.*;
 import org.apache.logging.log4j.Logger;
 import org.newdawn.slick.geom.Vector2f;
+import org.newdawn.slick.tiled.TiledMap;
 
 import static java.lang.Math.*;
 
@@ -40,6 +41,8 @@ public class Client extends BasicGame
 
     Camera camera;
 
+    MyTiledMap map;
+
     public Client()
     {
         super("OpenMOBA");
@@ -62,6 +65,9 @@ public class Client extends BasicGame
 
         spriteSheet = new SpriteSheet("assets/ProjectUtumno_full.png", SPRITE_SIZE, SPRITE_SIZE);
         sheetWrapper = new SpriteSheetWrapper(spriteSheet);
+//        map = new TiledMap("assets/3lanemap.tmx", "assets");
+        map = new MyTiledMap("assets/3lanemap_out.csv");
+
 
         Input input = gc.getInput();
         input.enableKeyRepeat();
@@ -90,6 +96,7 @@ public class Client extends BasicGame
         g.drawString("Mouse:(" + mousePos.x + ", " + mousePos.y + ")", 50, 120);
         g.drawString("World:(" + mouseWorldPosition.x + ", " + mouseWorldPosition.y + ")", 50, 140);
         camera.setupGraphics(gc, g);
+        map.render(g, 0, 0);
         character.getSprite().drawCentered(character.getX(), character.getY());
         g.drawImage(sheetWrapper.getSprite(SpriteID.TREE), 0, 0);
     }
