@@ -96,7 +96,7 @@ public class Client extends BasicGame
         g.drawString("Mouse:(" + mousePos.x + ", " + mousePos.y + ")", 50, 120);
         g.drawString("World:(" + mouseWorldPosition.x + ", " + mouseWorldPosition.y + ")", 50, 140);
         camera.setupGraphics(gc, g);
-        map.render(g, 0, 0);
+        map.render(g, spriteSheet, 0, 0);
         character.getSprite().drawCentered(character.getX(), character.getY());
         g.drawImage(sheetWrapper.getSprite(SpriteID.TREE), 0, 0);
     }

@@ -3,6 +3,8 @@ package Client;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.util.pathfinding.PathFindingContext;
 import org.newdawn.slick.util.pathfinding.TileBasedMap;
 import java.io.*;
@@ -87,6 +89,25 @@ public class MyTiledMap implements TileBasedMap {
         return 0;
     }
 
-    public void render(Graphics g, int x, int y) {
+    public void render(Graphics g, SpriteSheet sheet, int x, int y) {
+        int sheetHeight = getHeightInTiles();
+        int sheetWidth = getWidthInTiles();
+        float scale = 2.0f;
+        log.info(sheetWidth + ", " + sheetHeight);
+
+        for (int row = 0; row < height; row++) {
+            for (int column = 0; column < width; column++) {
+                int imageID = data[row][column];
+                int spritex = imageID % sheetWidth;
+                int spritey = imageID / sheetHeight;
+                log.info(imageID);
+                Image image = sheet.getSprite(spritex, spritey);
+                float imagex = x + column * Client.SPRITE_SIZE * scale;
+                float imagey = y + row * Client.SPRITE_SIZE * scale;
+                image.draw(imagex, imagey, scale);
+
+
+            }
+        }
     }
 }
